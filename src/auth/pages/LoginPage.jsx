@@ -1,5 +1,7 @@
+import { useEffect } from 'react';
 import { useAuthStore, useForm } from '../../hooks';
 import './LoginPage.css';
+import Swal from 'sweetalert2';
 
 
 const loginFormFields = {
@@ -21,7 +23,7 @@ const registerFormFields = {
 export const LoginPage = () => {
 
 
-    const {startLogin} = useAuthStore()
+    const {startLogin, errorMessage, starRegister} = useAuthStore()
 
     const {loginEmail, loginPassword, onInputChange:onLoginInputChange} = useForm( loginFormFields)
     const {RegisterName, RegisterEmail, RegisterPassword, RegisterPassword2, onInputChange:onRegisterInputChange} = useForm( registerFormFields)
@@ -37,8 +39,22 @@ export const LoginPage = () => {
 
     const registerSubmit = (e) => {
         e.preventDefault();
-        console.log({RegisterName, RegisterEmail, RegisterPassword, RegisterPassword2});
+        if(RegisterPassword !== RegisterPassword2){
+            Swal.fire('Contrasenas no coinciden', errorMessage, 'error')
+            return
+        }
+
+        starRegister({name: RegisterName, email: RegisterEmail, password: RegisterPassword})
     }
+
+
+    useEffect(() => {
+      if(errorMessage !== undefined){
+        Swal.fire('Error en Registro', 'Contrasenas no son iguales', 'error');
+      }
+      
+    }, [errorMessage])
+    
 
 
   return (

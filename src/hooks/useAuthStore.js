@@ -32,8 +32,25 @@ export const useAuthStore = () => {
             },10)
         }
 
+    }
 
 
+    const starRegister = async({name, email, password}) => {
+        dispatch(onChecking())
+
+        try{
+            const {data} = await calendarApi.post('/auth/new', {name, email, password})
+            localStorage.setItem('token', data.token)
+            localStorage.setItem('token-init-date', new Date().getTime())
+            dispatch(onLogin({name: data.name, uid: data.uid}))
+
+        }catch(error){
+            console.log({error})
+            dispatch(onLogout('Error al registrarte'))
+            setTimeout(() => {
+                dispatch(clearErrorMessage())
+            },10)
+        }
 
     }
 
@@ -45,7 +62,8 @@ export const useAuthStore = () => {
         errorMessage,
 
         // Metodos
-        startLogin
+        startLogin,
+        starRegister
     }
 
 
